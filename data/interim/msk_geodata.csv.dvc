@@ -1,0 +1,5 @@
+outs:
+- md5: 7bbfeab31dba7c24a4b9c1f3d1e13354
+  size: 18315410
+  hash: md5
+  path: msk_geodata.csv

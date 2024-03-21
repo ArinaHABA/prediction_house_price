@@ -1,0 +1,5 @@
+outs:
+- md5: 73237e52f6bd7a0dd0e6c91335256b8d
+  size: 47236894
+  hash: md5
+  path: msk_2018_2021_clear.csv

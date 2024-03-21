@@ -1,0 +1,5 @@
+outs:
+- md5: 00af12733984c983b49f412cef232a9f
+  size: 408179741
+  hash: md5
+  path: data_real_estate_2018_2021.csv
