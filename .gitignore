@@ -7,7 +7,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-venv/
 env/
 build/
 develop-eggs/
@@ -76,6 +75,8 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
+# exclude data from source control by default
+
 # Mac OS-specific storage files
 .DS_Store
 
@@ -85,3 +86,4 @@ target/
 
 # Mypy cache
 .mypy_cache/
+/data
