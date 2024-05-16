@@ -86,7 +86,7 @@ def predict_model():
     if type_house == "Новостройка":
         t = 11
     elif type_house == "Вторичка":
-         t = 1
+        t = 1
 
     segment = f'k={k}_t={t}_r={r}'
     # forcasting
