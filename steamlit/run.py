@@ -39,16 +39,28 @@ def predict_clastering(lat, lon):
 def predict_forcasting(number_claster : str):
     data = load_data_pd()
     ts = TSDataset(data, freq="MS")
+    if horizon == 1:
+        _test_end = "2020-12-01"
+    if horizon == 2:
+        _test_end = "2021-01-01"
+    if horizon == 3:
+        _test_end = "2021-02-01"
+    if horizon == 4:
+        _test_end = "2021-03-01"
+    if horizon == 5:
+        _test_end = "2021-04-01"
+    if horizon == 6:
+        _test_end = "2021-04-01"
     train_ts, test_ts = ts.train_test_split(
     train_start="2018-09-01",
-    train_end="2020-7-01",
-    test_start="2020-8-01",
-    test_end="2020-12-01",
+    train_end="2020-11-01",
+    test_start="2020-12-01",
+    test_end=_test_end,
     )
     model =  CatBoostMultiSegmentModel()
     model = load_model_forcasting()
-    HORIZON = 5
-    lags = LagTransform(in_column="target", lags=[5])
+    HORIZON = horizon
+    lags = LagTransform(in_column="target", lags=[6])
     transforms = [ lags]
     train_ts.fit_transform(transforms)
     future_ts = train_ts.make_future(future_steps=HORIZON, transforms=transforms)
@@ -58,7 +70,7 @@ def predict_forcasting(number_claster : str):
 
 
 def predict_model():
-    address = house + ', ' + street  
+    address = house + ', ' + street + ', Москва'
     geolocator = Nominatim(user_agent="base")
     location = geolocator.geocode(address)
     print(location)
@@ -70,10 +82,11 @@ def predict_model():
     k = number_claster
     t = 11
     r = number_room
-    # if number_room == "Новостройка":
-    #     t = 11
-    # elif number_room == "Вторичка":
-    #     t = 1
+    print(type_house)
+    if type_house == "Новостройка":
+        t = 11
+    elif type_house == "Вторичка":
+         t = 1
 
     segment = f'k={k}_t={t}_r={r}'
     # forcasting
