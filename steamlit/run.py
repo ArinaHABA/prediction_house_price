@@ -10,7 +10,8 @@ import pandas as pd
 import pickle
 
 @st.cache_data
-def load_model_forcasting(model):
+def load_model_forcasting():
+    model =  CatBoostMultiSegmentModel()
     fit_model = model.load('../models/model_forcasting.sav')
     return fit_model
     
@@ -21,18 +22,8 @@ def load_model_kmeans():
     return model
 
 @st.cache_data
-def load_train_pd():
-    pd_train = pd.read_csv('../models/train.csv')
-    return pd_train
-
-@st.cache_data
-def load_test_pd():
-    pd_test = pd.read_csv('../models/test.csv')
-    return pd_test
-
-@st.cache_data
 def load_data_pd():
-    data = pd.read_csv('../models/data.csv')
+    data = pd.read_pickle('../models/data.sav')
     return data
 
 def predict_clastering(lat, lon):
@@ -55,7 +46,7 @@ def predict_forcasting(number_claster : str):
     test_end="2020-12-01",
     )
     model =  CatBoostMultiSegmentModel()
-    model = load_model_forcasting(model)
+    model = load_model_forcasting()
     HORIZON = 5
     lags = LagTransform(in_column="target", lags=[5])
     transforms = [ lags]
@@ -67,11 +58,6 @@ def predict_forcasting(number_claster : str):
 
 
 def predict_model():
-    if street != '':
-        st.write("Введите улицу")
-    elif house != '':
-        st.write("Введите дом")
-    
     address = house + ', ' + street  
     geolocator = Nominatim(user_agent="base")
     location = geolocator.geocode(address)
@@ -82,12 +68,12 @@ def predict_model():
     number_claster = predict_clastering(lat, lon)
     # find segment
     k = number_claster
-    t = -1
+    t = 11
     r = number_room
-    if number_room == "Новостройка":
-        t = 11
-    elif number_room == "Вторичка":
-        t = 1
+    # if number_room == "Новостройка":
+    #     t = 11
+    # elif number_room == "Вторичка":
+    #     t = 1
 
     segment = f'k={k}_t={t}_r={r}'
     # forcasting
