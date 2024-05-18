@@ -63,7 +63,7 @@ def predict_forcasting(number_claster : str):
     if horizon == 5:
         _test_end = "2021-04-01"
     if horizon == 6:
-        _test_end = "2021-04-01"
+        _test_end = "2021-05-01"
     train_ts, test_ts = ts.train_test_split(
     train_start="2018-09-01",
     train_end="2020-11-01",
@@ -94,7 +94,7 @@ def predict_forcasting_days(number_claster : str):
     if horizon == 5:
         _test_end = "2021-04-01"
     if horizon == 6:
-        _test_end = "2021-04-01"
+        _test_end = "2021-05-01"
     train_ts, test_ts = ts.train_test_split(
     train_start="2018-09-25",
     train_end="2020-11-01",
@@ -151,7 +151,7 @@ def predict_model(days):
 with st.sidebar:
     selected = option_menu(
         menu_title = "Меню",
-        options = ['Руководство пользователю',
+        options = ['Краткое руководство оператора',
                    'Предсказание по месяцам', 
                   'Предсказание по дням',
                   ],
@@ -232,7 +232,16 @@ if selected == "Предсказание по дням":
         st.pyplot(fig)
 
 
-if selected == "Руководство пользователю":
-    st.title("Руководство пользователю", anchor=None, help=None)
-
-    
+if selected == "Краткое руководство оператора":
+    st.subheader("Встречайте предиктивную систему, которая поможет Вам посмотреть прогноз цен на желаемую квартиру!", anchor=None, help=None)
+    st.divider()
+    st.subheader("Прогноз цен можно посмотреть по разным промежуткам времени: как по месяцам, так и по дням. Выбрать интересующий интервал предсказания можно в разделе 'Меню'")
+    st.markdown("Для того, чтобы расчитать прогноз цен, необходимо ввести ряд параметров:")
+    st.markdown("<span style='font-style: italic;'>Шаг 1:</span> Ввести улицу", unsafe_allow_html=True)
+    st.markdown("<span style='font-style: italic;'>Шаг 2:</span> Ввести номер дома", unsafe_allow_html=True)
+    st.markdown("<span style='font-style: italic;'>Шаг 3:</span> Выбрать тип жилья (новостройка/ вторичка)", unsafe_allow_html=True)
+    st.markdown("<span style='font-style: italic;'>Шаг 4:</span> Выбрать количество комнат (от 1 до 4 комнат)", unsafe_allow_html=True)
+    st.markdown("<span style='font-style: italic;'>Шаг 5:</span> На ползунке выбрать дальность предсказания (от 1 до 6 месяцев)", unsafe_allow_html=True)
+    st.markdown("<span style='font-style: italic;'>Шаг 6:</span> Прожать необходимые кнопки активации. Доступны 2:", unsafe_allow_html=True)
+    st.markdown("<div style='margin-left: 40px;'>1. Отобразить исторические данные цен</div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-left: 40px;'>2. Показать реальные цена на предсказании</div>", unsafe_allow_html=True)
