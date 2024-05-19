@@ -161,7 +161,7 @@ def get_coordinates_from_address(street: str, house: str):
     return location.latitude, location.longitude
 
 
-def get_address_from_coordinates(lat, lon):
+def get_address_from_coordinates(lat : float, lon : float):
     """Функция, отрабатывающая обратный геокоднг из координат в адресс (OpenStreatMap API)
     args:
         lat : значение широты (градусы)
