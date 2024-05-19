@@ -1,4 +1,5 @@
 from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 from etna.datasets import TSDataset
 from etna.models import CatBoostMultiSegmentModel
 from etna.transforms import LagTransform
@@ -125,6 +126,15 @@ def get_coordinates_from_address(street, house):
     location = geolocator.geocode(address)
     return location.latitude, location.longitude
 
+def get_address_from_coordinates(lat, lon):
+    geolocator = Nominatim(user_agent="base")
+    try:
+        location = geolocator.reverse((lat, lon), timeout=10)
+        address = location.address
+        return address
+    except GeocoderTimedOut:
+        return None
+
 with st.sidebar:
     selected = option_menu(
         menu_title="Меню",
@@ -140,15 +150,30 @@ if selected == "Предсказание по месяцам":
     st.header("Введите параметры жилья")
 
     st.subheader('Выберите местоположение жилья на карте или введите адрес')
-    map_data = st_folium(folium.Map(location=[55.751244, 37.618423], zoom_start=12), width=700, height=500)
+    m = folium.Map(location=[55.751244, 37.618423], zoom_start=12)
+    map_data = st_folium(m, width=700, height=500)
+    
     lat, lon = None, None
+    street, house = "", ""  # Инициализируем переменные пустыми значениями
     if map_data['last_clicked']:
         lat, lon = map_data['last_clicked']['lat'], map_data['last_clicked']['lng']
         st.write(f"Выбрана точка: Широта {lat}, Долгота {lon}")
+        
+        # Добавление маркера на карту
+        folium.Marker([lat, lon], tooltip='Кликнутая точка').add_to(m)
+
+        # Обратный геокодинг для автозаполнения
+        address = get_address_from_coordinates(lat, lon)
+        if address:
+            st.write(f"Адрес: {address}")
+            address_parts = address.split(',')
+            if len(address_parts) > 1:
+                house = address_parts[0].strip()
+                street = address_parts[1].strip()
 
     st.subheader('Введите адрес жилья')
-    street = st.text_input("Введите улицу")
-    house = st.text_input("Введите дом")
+    street = st.text_input("Введите улицу", value=street)
+    house = st.text_input("Введите дом", value=house)
     
     if street and house:
         lat, lon = get_coordinates_from_address(street, house)
@@ -193,15 +218,30 @@ if selected == "Предсказание по дням":
     st.header("Введите параметры жилья")
 
     st.subheader('Выберите местоположение жилья на карте или введите адрес')
-    map_data = st_folium(folium.Map(location=[55.751244, 37.618423], zoom_start=12), width=700, height=500)
+    m = folium.Map(location=[55.751244, 37.618423], zoom_start=12)
+    map_data = st_folium(m, width=700, height=500)
+    
     lat, lon = None, None
+    street, house = "", ""  # Инициализируем переменные пустыми значениями
     if map_data['last_clicked']:
         lat, lon = map_data['last_clicked']['lat'], map_data['last_clicked']['lng']
         st.write(f"Выбрана точка: Широта {lat}, Долгота {lon}")
+        
+        # Добавление маркера на карту
+        folium.Marker([lat, lon], tooltip='Кликнутая точка').add_to(m)
+
+        # Обратный геокодинг для автозаполнения
+        address = get_address_from_coordinates(lat, lon)
+        if address:
+            st.write(f"Адрес: {address}")
+            address_parts = address.split(',')
+            if len(address_parts) > 1:
+                house = address_parts[0].strip()
+                street = address_parts[1].strip()
 
     st.subheader('Введите адрес жилья')
-    street = st.text_input("Введите улицу")
-    house = st.text_input("Введите дом")
+    street = st.text_input("Введите улицу", value=street)
+    house = st.text_input("Введите дом", value=house)
     
     if street and house:
         lat, lon = get_coordinates_from_address(street, house)
