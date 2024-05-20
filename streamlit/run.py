@@ -17,6 +17,7 @@ from cache_data import load_model_forcasting_days
 from cache_data import load_model_kmeans
 from cache_data import load_data_pd
 from cache_data import load_data_days_pd
+from cache_data import load_model_forcasting_days_many
 
 hirezon2timestamp = {
     1: "2020-12-01",
@@ -26,6 +27,16 @@ hirezon2timestamp = {
     5: "2021-04-01",
     6: "2021-05-01",
 }  # преобразует число горизонт предсказания в тип timestamp
+
+hirezon2timestamp_days = {
+    1: "2020-08-30",
+    2: "2020-09-29",
+    3: "2020-10-29",
+    4: "2020-11-28",
+    5: "2020-12-28",
+    6: "2021-01-27",
+}
+# преобразует число горизонт предсказания в тип timestamp
 
 type_str2int = {
     "Новостройка": 11,
@@ -97,15 +108,19 @@ def predict_forcasting_days(number_claster: int):
     data = load_data_days_pd()
     ts = TSDataset(data, freq="D")
     train_ts, test_ts = ts.train_test_split(
-        train_start="2018-09-25",
-        train_end="2020-11-01",
-        test_start="2020-11-01",
-        test_end=hirezon2timestamp[horizon],
+        train_start="2018-10-25",
+        train_end="2020-07-31",
+        test_start="2020-08-01",
+        test_end=hirezon2timestamp_days[horizon],
     )
 
-    model = load_model_forcasting_days()
+    # model = load_model_forcasting_days()
+    model = load_model_forcasting_days_many(horizon)
     HORIZON = horizon * 30
-    lags = LagTransform(in_column="target", lags=[30 * 6])
+    # MIN_LAG = 180
+    MAX_LAG = HORIZON + 400
+    lags = LagTransform(in_column="target", lags=list(range(HORIZON, MAX_LAG)))
+    # lags = LagTransform(in_column="target", lags=[6*30])
     transforms = [lags]
     train_ts.fit_transform(transforms)
     future_ts = train_ts.make_future(future_steps=HORIZON, transforms=transforms)
@@ -161,7 +176,7 @@ def get_coordinates_from_address(street: str, house: str):
     return location.latitude, location.longitude
 
 
-def get_address_from_coordinates(lat : float, lon : float):
+def get_address_from_coordinates(lat: float, lon: float):
     """Функция, отрабатывающая обратный геокоднг из координат в адресс (OpenStreatMap API)
     args:
         lat : значение широты (градусы)
@@ -238,7 +253,7 @@ if selected == "Предсказание по месяцам":
     on_train = st.checkbox("Отобразить исторические данные цен")
     on_test = st.checkbox("Показать реальные цена на предсказании")
 
-    if st.button("Predict!!!"):
+    if st.button("Предсказать"):
         if lat is not None and lon is not None:
             forecast, train, test = predict_model(lat, lon, days=False)
             fig, ax = plt.subplots()
@@ -304,7 +319,7 @@ if selected == "Предсказание по дням":
     on_train = st.checkbox("Отобразить исторические данные цен")
     on_test = st.checkbox("Показать реальные цена на предсказании")
 
-    if st.button("Predict!!!"):
+    if st.button("Предсказать"):
         if lat is not None and lon is not None:
             forecast, train, test = predict_model(lat, lon, days=True)
             fig, ax = plt.subplots()
